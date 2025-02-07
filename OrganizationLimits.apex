@@ -9,7 +9,6 @@ global with sharing class OrganizationLimits implements Schedulable{
         TimeZone tz = UserInfo.getTimeZone();
         // offset is given in microseconds, this converts to hours
         Integer offsetHour = 24 + (tz.getOffset(now)/60/60/1000) - 1;
-        //0 59 '+offsetHour+' ? * MON-FRI *
         String cron = '0 59 '+offsetHour+' ? * MON-FRI *';
         return cron;
     }
@@ -28,7 +27,8 @@ global with sharing class OrganizationLimits implements Schedulable{
             if (TriggerErrorForTest){
                 throw new TMException('TEST_ERROR');
             }
-            // Adjust your retention period here
+            // Adjust your retention period here, or to remove it if you want to keep all logs.
+            // If you remove this line, you must also delete the removeOldLogs() method in the test class.
             delete [SELECT Id FROM Limit_Log__c WHERE CreatedDate < LAST_N_MONTHS:6];
         }
         catch (Exception e){
